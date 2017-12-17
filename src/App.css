@@ -18,5 +18,12 @@
 }
 
 .App-intro {
+  text-align: left;
+  font-size: large;
+}
+
+.App-proposalForm
+{
+  text-align: left;
   font-size: large;
 }
