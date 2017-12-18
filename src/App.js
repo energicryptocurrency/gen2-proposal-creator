@@ -151,8 +151,16 @@ class App extends Component
   handleInputChange(event)
   {
     const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
+    let value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
+
+    // make sure numbers are numbers
+    if ((name === 'start_epoch')
+      || (name == 'end_epoch')
+      || (name == 'payment_amount'))
+    {
+        value = Number(value) || 0;
+    }
 
     let new_gobj = this.state.gobj;
     new_gobj[0][1][name] = value;
