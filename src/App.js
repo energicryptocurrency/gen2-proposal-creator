@@ -57,6 +57,7 @@ class App extends Component
     this.validateNewState = this.validateNewState.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.getGovernanceInfo = this.getGovernanceInfo.bind(this);
+    this.getBestBlock = this.getBestBlock.bind(this);
   }
 
   getGovernanceInfo()
@@ -78,10 +79,75 @@ class App extends Component
     .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
   }
 
+  getBestBlock()
+  {
+    function getBlock(hash)
+    {
+      return fetch('http://explore.test60x.energi.network/api/getblock?hash=' + hash)
+      .then((resp) => {
+        if (resp.ok) {
+          return resp.json()
+            .then((responseData) => {
+              this.setState({bestBlock: responseData});
+              return responseData;
+            });
+        }
+        return resp.json()
+          .then((error) => {
+            return Promise.reject(error);
+          });
+      })
+      .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
+    }
+
+    function getHash(height)
+    {
+      return fetch('http://explore.test60x.energi.network/api/getblockhash?index=' + Number(height).toString())
+      .then((resp) => {
+        if (resp.ok) {
+          return resp.text()
+            .then((responseData) => {
+              getBlock(responseData);
+              return responseData;
+            });
+        }
+        return resp.text()
+          .then((error) => {
+            return Promise.reject(error);
+          });
+      })
+      .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
+    }
+
+    function getHeight()
+    {
+      return fetch('http://explore.test60x.energi.network/api/getblockcount')
+      .then((resp) => {
+        if (resp.ok) {
+          return resp.text()
+            .then((responseData) => {
+              return getHash(responseData);
+            });
+        }
+        return resp.text()
+          .then((error) => {
+            return Promise.reject(error);
+          });
+      })
+      .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
+    }
+    getHeight = getHeight.bind(this);
+    getHash = getHash.bind(this);
+    getBlock = getBlock.bind(this);
+
+    getHeight();
+  }
+
   componentDidMount()
   {
     document.title = "Energi Proposal Creator";
     this.getGovernanceInfo();
+    this.getBestBlock();
   }
 
   setError(errStr)
