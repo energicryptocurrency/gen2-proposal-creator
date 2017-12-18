@@ -130,8 +130,16 @@ class App extends Component
 
     function validateProposalAddress(setError, state)
     {
-      // TODO: validate payment address
-      setError("Payment address is not valid");
+      // Energi main net addresses start with 'E' and testnet addresses start with 't'
+      const addrPrefix = state.network == 'main' ? '^E' : '^t';
+      const validChars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+      const regexStr = addrPrefix + '[' + validChars + ']{33}$';
+      let prefixRegex = new RegExp(regexStr, "i");
+      const payment_address = state.gobj[0][1].payment_address;
+      if (!payment_address.match(prefixRegex) || (payment_address.length != 34))
+      {
+        setError("Payment address is not valid");
+      }
     }
 
     function validateProposalAmount(setError, state)
@@ -163,7 +171,7 @@ class App extends Component
     validateProposalURL(this.setError, this.state);
     //validateProposalStart(this.setError, this.state);
     //validateProposalEnd(this.setError, this.state);
-    //validateProposalAddress(this.setError, this.state);
+    validateProposalAddress(this.setError, this.state);
     validateProposalAmount(this.setError, this.state);
   }
 
