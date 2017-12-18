@@ -21,6 +21,7 @@
 */
 
 import React, { Component } from 'react';
+import TextInputField from './TextInputField.js';
 import SelectFirstPayment from './SelectFirstPayment.js';
 import SelectPaymentCycles from './SelectPaymentCycles.js';
 
@@ -36,28 +37,12 @@ class PrepareForm extends Component
     return (
         <div className="App-prepareForm">
           <form>
-            <label>
-              Proposal Name:
-              <input name="name" type="text" onChange={this.props.onChange} />
-            </label>
-            <br />
-            <label>
-              Proposal Description URL:
-              <input name="url" type="text" onChange={this.props.onChange} />
-            </label>
-            <br />
+            <TextInputField fieldLabel="Proposal Name" fieldName="name" onChange={this.props.onChange} />
+            <TextInputField fieldLabel="Proposal Description URL" fieldName="url" onChange={this.props.onChange} />
             <SelectFirstPayment onChange={this.props.onChange} />
             <SelectPaymentCycles onChange={this.props.onChange} />
-            <br />
-            <label>
-              Payment Address:
-              <input name="payment_address" type="text" onChange={this.props.onChange} />
-            </label>
-            <br />
-            <label>
-              Payment Amount:
-              <input name="payment_amount" type="number" onChange={this.props.onChange} />
-            </label>
+            <TextInputField fieldLabel="Payment Address" fieldName="payment_address" onChange={this.props.onChange} />
+            <TextInputField fieldLabel="Payment Amount" fieldName="payment_amount" onChange={this.props.onChange} />
           </form>
         </div>
     );
