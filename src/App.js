@@ -92,7 +92,7 @@ class App extends Component
       {
         setError("Proposal name must a unique name between 5 and 20 characters in length");
       }
-      let allowedCharactersRegex = /^([a-zA-Z0-9]| |_)+$/i;
+      let allowedCharactersRegex = /^[a-zA-Z0-9 _]+$/i;
       if (!name.match(allowedCharactersRegex))
       {
         setError("Proposal name may only contain alphanumeric characters, space and underscore")
