@@ -85,50 +85,67 @@ class App extends Component
 
   validateNewState()
   {
-    function validateProposalName(setError)
+    function validateProposalName(setError, state)
     {
       // TODO: validate proposal name
       setError("Proposal name must a unique name between 5 and 20 characters in length");
     }
 
-    function validateProposalURL(setError)
+    function validateProposalURL(setError, state)
     {
       // TODO: validate proposal URL
       setError("Proposal URL must begin with http:// or https://");
     }
 
-    function validateProposalStart(setError)
+    function validateProposalStart(setError, state)
     {
       // TODO: validate start_epoch
       setError("Proposal start date is invalid");
     }
 
-    function validateProposalEnd(setError)
+    function validateProposalEnd(setError, state)
     {
       // TODO: validate end_epoch
       setError("Number of payment cycles must be between 1 and 26");
     }
 
-    function validateProposalAddress(setError)
+    function validateProposalAddress(setError, state)
     {
       // TODO: validate payment address
       setError("Payment address is not valid");
     }
 
-    function validateProposalAmount(setError)
+    function validateProposalAmount(setError, state)
     {
-      // TODO: validate payment amount
-      setError("Payment amount exceeds maximum budget");
+      // TODO: special budget consideration for first budget cycle
+      const maximumBudgetAmount = 184000;
+      const payment_amount = state.gobj[0][1].payment_amount;
+      if (payment_amount > maximumBudgetAmount)
+      {
+        setError("Payment amount exceeds maximum budget");
+      }
+      if (payment_amount <= 0)
+      {
+        setError("Payment amount must be greater than 0");
+      }
+    }
+
+    function validateProposalType(setError, state)
+    {
+      if (state.gobj[0][1]['type'] != '1')
+      {
+        setError("Proposal type must be equal to 1");
+      }
     }
 
     // clear the error state and begin validation
     this.setError("");
-    validateProposalName(this.setError);
-    validateProposalURL(this.setError);
-    validateProposalStart(this.setError);
-    validateProposalEnd(this.setError);
-    validateProposalAddress(this.setError);
-    validateProposalAmount(this.setError);
+    //validateProposalName(this.setError, this.state);
+    //validateProposalURL(this.setError, this.state);
+    //validateProposalStart(this.setError, this.state);
+    //validateProposalEnd(this.setError, this.state);
+    //validateProposalAddress(this.setError, this.state);
+    validateProposalAmount(this.setError, this.state);
   }
 
   handleInputChange(event)
