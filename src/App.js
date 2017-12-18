@@ -56,23 +56,58 @@ class App extends Component
     this.hasError = this.hasError.bind(this);
     this.validateNewState = this.validateNewState.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.getGovernanceInfo = this.getGovernanceInfo.bind(this);
+  }
+
+  getGovernanceInfo()
+  {
+    return fetch('http://explore.test60x.energi.network/api/getgovernanceinfo')
+    .then((resp) => {
+      if (resp.ok) {
+        return resp.json()
+          .then((responseData) => {
+            this.setState({governanceInfo: responseData});
+            return responseData;
+          });
+      }
+      return resp.json()
+        .then((error) => {
+          return Promise.reject(error);
+        });
+    })
+    .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
+
+    /*
+    const _this = this;
+    fetch('http://explore.test.energi.network/api/getgovernanceinfo')
+    .then(function(response){
+      _this.setState({"test":"me"});
+      return response.json();
+    })
+    .then(function(response){
+      _this.setState({governanceInfo: response});
+    });
+    */
+
+    /*
+      .then((response) => { return response.json(); })
+      .then((response) => {
+        _this.setState({
+          governanceInfo: response
+        }, function() {
+          // do something with new state
+        })
+      .catch((error) => {
+        console.error(error);
+      });
+    });
+    */
   }
 
   componentDidMount()
   {
     document.title = "Energi Proposal Creator";
-    return fetch('http://explore.test.energi.network/api/getgovernanceinfo')
-      .then((response) => response.json())
-      .then((responseJson) => {
-        this.setState({
-          governanceInfo: responseJson
-        }, function() {
-          // do something with new state
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    this.getGovernanceInfo();
   }
 
   setError(errStr)
