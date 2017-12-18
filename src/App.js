@@ -131,12 +131,12 @@ class App extends Component
     function validateProposalAddress(setError, state)
     {
       // Energi main net addresses start with 'E' and testnet addresses start with 't'
-      const addrPrefix = state.network == 'main' ? '^E' : '^t';
+      const addrPrefix = state.network === 'main' ? '^E' : '^t';
       const validChars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
       const regexStr = addrPrefix + '[' + validChars + ']{33}$';
       let prefixRegex = new RegExp(regexStr, "i");
       const payment_address = state.gobj[0][1].payment_address;
-      if (!payment_address.match(prefixRegex) || (payment_address.length != 34))
+      if (!payment_address.match(prefixRegex) || (payment_address.length !== 34))
       {
         setError("Payment address is not valid");
       }
@@ -159,7 +159,7 @@ class App extends Component
 
     function validateProposalType(setError, state)
     {
-      if (state.gobj[0][1]['type'] != '1')
+      if (state.gobj[0][1]['type'] !== '1')
       {
         setError("Proposal type must be equal to 1");
       }
@@ -173,6 +173,7 @@ class App extends Component
     //validateProposalEnd(this.setError, this.state);
     validateProposalAddress(this.setError, this.state);
     validateProposalAmount(this.setError, this.state);
+    validateProposalType(this.setError, this.state);
   }
 
   handleInputChange(event)
@@ -183,8 +184,8 @@ class App extends Component
 
     // make sure numbers are numbers
     if ((name === 'start_epoch')
-      || (name == 'end_epoch')
-      || (name == 'payment_amount'))
+      || (name === 'end_epoch')
+      || (name === 'payment_amount'))
     {
         value = Number(value) || 0;
     }

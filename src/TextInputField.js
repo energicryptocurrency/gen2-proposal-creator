@@ -24,10 +24,12 @@ import React, { Component } from 'react';
 
 class TextInputField extends Component
 {
+  /*
   constructor(props)
   {
     super(props);
   }
+  */
 
   render()
   {

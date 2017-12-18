@@ -28,10 +28,12 @@ import ValidationError from './ValidationError.js';
 
 class PrepareForm extends Component
 {
+  /*
   constructor(props)
   {
     super(props);
   }
+  */
 
   render()
   {

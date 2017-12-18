@@ -24,10 +24,12 @@ import React, { Component } from 'react';
 
 class SelectFirstPayment extends Component
 {
+  /*
   constructor(props)
   {
     super(props);
   }
+  */
 
   getBudgetCycleStartDates()
   {
