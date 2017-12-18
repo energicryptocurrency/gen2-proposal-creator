@@ -57,7 +57,9 @@ class App extends Component
     this.handleInputChange = this.handleInputChange.bind(this);
   }
 
-  componentDidMount() {
+  componentDidMount()
+  {
+    document.title = "Energi Proposal Creator";
     return fetch('http://explore.test.energi.network/api/getgovernanceinfo')
       .then((response) => response.json())
       .then((responseJson) => {
