@@ -35,8 +35,8 @@ class TextInputField extends Component
     return (
       <div>
         <label>
-          {this.props.fieldLabel}:
-          <input name={this.props.fieldName} type="text" onChange={this.props.onChange} />
+          {props.fieldLabel}:
+          <input name={props.fieldName} type="text" onChange={props.onChange} />
         </label>
       </div>
     );
