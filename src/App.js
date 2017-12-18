@@ -229,12 +229,11 @@ class App extends Component
 
     function validateProposalAmount(setError, state)
     {
-      // TODO: special budget consideration for first budget cycle
-      const maximumBudgetAmount = 184000;
+      const maximumBudgetAmount = state.governanceInfo.lastsuperblock === 0 ? 4000000 : 184000;
       const payment_amount = state.gobj[0][1].payment_amount;
       if (payment_amount > maximumBudgetAmount)
       {
-        setError("Payment amount exceeds maximum budget");
+        setError("Payment amount exceeds maximum budget of " + maximumBudgetAmount.toString() + " EGI");
         return false;
       }
       if (payment_amount <= 0)
