@@ -23,6 +23,7 @@
 import React, { Component } from 'react';
 import logo from './logo256.png';
 import './App.css';
+import PrepareForm from './PrepareForm.js';
 
 class App extends Component
 {
@@ -30,114 +31,75 @@ class App extends Component
   {
     super(props);
 
-    // there are 26 payment cycles annually for Energi, so this would be 1 year worth of payments.
-    this.maximumNumberOfPaymentCycles = 26;
-
-    this.gobj =
-    [
-      [
-        "proposal",
-        {
-          "end_epoch": 0,
-          "name": "",
-          "payment_address": "",
-          "payment_amount": 0,
-          "start_epoch": 0,
-          "type": 1,
-          "url": ""
-        }
-      ]
-    ];
-
     // reference to internal proposal data we need to modify for convenience
-    this.state = this.gobj[0][1];
-
+    this.state = {
+      gobj: [
+        [
+          "proposal",
+          {
+            "end_epoch": 0,
+            "name": "",
+            "payment_address": "",
+            "payment_amount": 0,
+            "start_epoch": 0,
+            "type": 1,
+            "url": ""
+          }
+        ]
+      ],
+      governanceInfo: {},
+      bestBlock: {},
+    }
     this.handleInputChange = this.handleInputChange.bind(this);
+  }
+
+  componentDidMount() {
+    return fetch('http://explore.test.energi.network/api/getgovernanceinfo')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({
+          governanceInfo: responseJson
+        }, function() {
+          // do something with new state
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   handleInputChange(event)
   {
     const target = event.target;
-    const value = target.type == 'checkbox' ? target.checked : target.value;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
-    this.setState({[name]: value});
-    this.gobj[0][1] = this.state;
-  }
-
-  getBudgetCycleStartDates()
-  {
-    let budgetCycleStartDates = [ 0, 1, 2, 3 ];
-    let htmlOptionTags = [];
-    for (let i = 0; i < budgetCycleStartDates.length; i++)
-    {
-      htmlOptionTags.push(<option key={i} value={i}>{i}</option>);
-    }
-    return htmlOptionTags;
-  }
-
-  getNumberOfPayments()
-  {
-    let htmlOptionTags = [];
-    for (let i = 1; i <= this.maximumNumberOfPaymentCycles; i++)
-    {
-      htmlOptionTags.push(<option key={i} value={i}>{i} Payments</option>);
-    }
-    return htmlOptionTags;
+    let new_gobj = this.state.gobj;
+    new_gobj[0][1][name] = value;
+    this.setState({gobj: new_gobj});
   }
 
   render()
   {
+    let prepareform_props = {
+      onChange: this.handleInputChange
+    };
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Energi Proposal Creator</h1>
         </header>
-        <div className="App-proposalForm">
-          <form>
-            <label>
-              Proposal Name:
-              <input name="name" type="text" onChange={this.handleInputChange} />
-            </label>
-            <br />
-            <label>
-              Proposal Description URL:
-              <input name="url" type="text" onChange={this.handleInputChange} />
-            </label>
-            <br />
-            <label>
-              Payment Date:
-              <select name="start_epoch" onChange={this.handleInputChange}>
-                { this.getBudgetCycleStartDates() }
-              </select>
-            </label>
-            <br />
-            <label>
-              Payments:
-              <select name="end_epoch" onChange={this.handleInputChange}>
-                { this.getNumberOfPayments() }
-              </select>
-            </label>
-            <br />
-            <label>
-              Payment Address:
-              <input name="payment_address" type="text" onChange={this.handleInputChange} />
-            </label>
-            <br />
-            <label>
-              Payment Amount:
-              <input name="payment_amount" type="number" onChange={this.handleInputChange} />
-            </label>
-          </form>
-        </div>
+        <PrepareForm {...prepareform_props} />
 
-        <p className="App-intro">
-          Proposal JSON:
-          <pre>
-            { JSON.stringify(this.gobj, null, "\t") }
-          </pre>
-        </p>
+        <div>
+          <p className="App-intro">
+            Current State:
+            <pre>
+              { JSON.stringify(this.state, null, "\t") }
+            </pre>
+          </p>
+        </div>
       </div>
     );
   }
