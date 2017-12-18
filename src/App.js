@@ -49,7 +49,11 @@ class App extends Component
       ],
       governanceInfo: {},
       bestBlock: {},
+      validationError: ""
     }
+    this.setError = this.setError.bind(this);
+    this.hasError = this.hasError.bind(this);
+    this.validateNewState = this.validateNewState.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
   }
 
@@ -68,6 +72,65 @@ class App extends Component
       });
   }
 
+  setError(errStr)
+  {
+    this.setState({validationError: errStr});
+  }
+
+  hasError()
+  {
+    if (this.state.validationError === '') return false;
+    return true;
+  }
+
+  validateNewState()
+  {
+    function validateProposalName(setError)
+    {
+      // TODO: validate proposal name
+      setError("Proposal name must a unique name between 5 and 20 characters in length");
+    }
+
+    function validateProposalURL(setError)
+    {
+      // TODO: validate proposal URL
+      setError("Proposal URL must begin with http:// or https://");
+    }
+
+    function validateProposalStart(setError)
+    {
+      // TODO: validate start_epoch
+      setError("Proposal start date is invalid");
+    }
+
+    function validateProposalEnd(setError)
+    {
+      // TODO: validate end_epoch
+      setError("Number of payment cycles must be between 1 and 26");
+    }
+
+    function validateProposalAddress(setError)
+    {
+      // TODO: validate payment address
+      setError("Payment address is not valid");
+    }
+
+    function validateProposalAmount(setError)
+    {
+      // TODO: validate payment amount
+      setError("Payment amount exceeds maximum budget");
+    }
+
+    // clear the error state and begin validation
+    this.setError("");
+    validateProposalName(this.setError);
+    validateProposalURL(this.setError);
+    validateProposalStart(this.setError);
+    validateProposalEnd(this.setError);
+    validateProposalAddress(this.setError);
+    validateProposalAmount(this.setError);
+  }
+
   handleInputChange(event)
   {
     const target = event.target;
@@ -77,6 +140,7 @@ class App extends Component
     let new_gobj = this.state.gobj;
     new_gobj[0][1][name] = value;
     this.setState({gobj: new_gobj});
+    this.validateNewState();
   }
 
   render()
