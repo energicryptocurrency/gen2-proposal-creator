@@ -27,3 +27,10 @@
   text-align: left;
   font-size: large;
 }
+
+.App-validationErrorDiv
+{
+  font-size: large;
+  color: red;
+  font-weight: bold;
+}

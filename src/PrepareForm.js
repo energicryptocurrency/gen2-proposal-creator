@@ -24,6 +24,7 @@ import React, { Component } from 'react';
 import TextInputField from './TextInputField.js';
 import SelectFirstPayment from './SelectFirstPayment.js';
 import SelectPaymentCycles from './SelectPaymentCycles.js';
+import ValidationError from './ValidationError.js';
 
 class PrepareForm extends Component
 {
@@ -36,6 +37,7 @@ class PrepareForm extends Component
   {
     return (
         <div className="App-prepareForm">
+        <div>
           <form>
             <TextInputField fieldLabel="Proposal Name" fieldName="name" onChange={this.props.onChange} />
             <TextInputField fieldLabel="Proposal Description URL" fieldName="url" onChange={this.props.onChange} />
@@ -44,6 +46,8 @@ class PrepareForm extends Component
             <TextInputField fieldLabel="Payment Address" fieldName="payment_address" onChange={this.props.onChange} />
             <TextInputField fieldLabel="Payment Amount" fieldName="payment_amount" onChange={this.props.onChange} />
           </form>
+        </div>
+        <ValidationError error={this.props.validationError} />
         </div>
     );
   }
