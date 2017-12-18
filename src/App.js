@@ -33,6 +33,7 @@ class App extends Component
 
     // reference to internal proposal data we need to modify for convenience
     this.state = {
+      network: "test60x",
       gobj: [
         [
           "proposal",
