@@ -76,32 +76,6 @@ class App extends Component
         });
     })
     .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
-
-    /*
-    const _this = this;
-    fetch('http://explore.test.energi.network/api/getgovernanceinfo')
-    .then(function(response){
-      _this.setState({"test":"me"});
-      return response.json();
-    })
-    .then(function(response){
-      _this.setState({governanceInfo: response});
-    });
-    */
-
-    /*
-      .then((response) => { return response.json(); })
-      .then((response) => {
-        _this.setState({
-          governanceInfo: response
-        }, function() {
-          // do something with new state
-        })
-      .catch((error) => {
-        console.error(error);
-      });
-    });
-    */
   }
 
   componentDidMount()
