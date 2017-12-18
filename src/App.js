@@ -87,8 +87,17 @@ class App extends Component
   {
     function validateProposalName(setError, state)
     {
-      // TODO: validate proposal name
-      setError("Proposal name must a unique name between 5 and 20 characters in length");
+      const name = state.gobj[0][1].name;
+      if ((name.length < 5) || (name.length > 20))
+      {
+        setError("Proposal name must a unique name between 5 and 20 characters in length");
+      }
+      let allowedCharactersRegex = /^([a-zA-Z0-9]| |_)+$/i;
+      if (!name.match(allowedCharactersRegex))
+      {
+        setError("Proposal name may only contain alphanumeric characters, space and underscore")
+      }
+      // TODO: make sure proposal name doesn't match any active proposal names
     }
 
     function validateProposalURL(setError, state)
@@ -147,7 +156,7 @@ class App extends Component
 
     // clear the error state and begin validation
     this.setError("");
-    //validateProposalName(this.setError, this.state);
+    validateProposalName(this.setError, this.state);
     validateProposalURL(this.setError, this.state);
     //validateProposalStart(this.setError, this.state);
     //validateProposalEnd(this.setError, this.state);
