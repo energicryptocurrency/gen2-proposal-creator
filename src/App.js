@@ -93,8 +93,15 @@ class App extends Component
 
     function validateProposalURL(setError, state)
     {
-      // TODO: validate proposal URL
-      setError("Proposal URL must begin with http:// or https://");
+      const url = state.gobj[0][1].url;
+      if (!url.startsWith('http://') && !url.startsWith('https://'))
+      {
+        setError("Proposal URL must begin with http:// or https://");
+      }
+      if (url.length > 255) // TODO: verify maximum URL length
+      {
+        setError("Maximum URL length is 255 characters. Please use a URL shortening service.");
+      }
     }
 
     function validateProposalStart(setError, state)
@@ -141,7 +148,7 @@ class App extends Component
     // clear the error state and begin validation
     this.setError("");
     //validateProposalName(this.setError, this.state);
-    //validateProposalURL(this.setError, this.state);
+    validateProposalURL(this.setError, this.state);
     //validateProposalStart(this.setError, this.state);
     //validateProposalEnd(this.setError, this.state);
     //validateProposalAddress(this.setError, this.state);
