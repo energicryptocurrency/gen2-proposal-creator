@@ -94,13 +94,16 @@ class App extends Component
       if ((name.length < 5) || (name.length > 20))
       {
         setError("Proposal name must a unique name between 5 and 20 characters in length");
+        return false;
       }
       let allowedCharactersRegex = /^[a-zA-Z0-9 _]+$/i;
       if (!name.match(allowedCharactersRegex))
       {
-        setError("Proposal name may only contain alphanumeric characters, space and underscore")
+        setError("Proposal name may only contain alphanumeric characters, space and underscore");
+        return false;
       }
       // TODO: make sure proposal name doesn't match any active proposal names
+      return true;
     }
 
     function validateProposalURL(setError, state)
@@ -109,23 +112,28 @@ class App extends Component
       if (!url.startsWith('http://') && !url.startsWith('https://'))
       {
         setError("Proposal URL must begin with http:// or https://");
+        return false;
       }
       if (url.length > 255) // TODO: verify maximum URL length
       {
         setError("Maximum URL length is 255 characters. Please use a URL shortening service.");
+        return false;
       }
+      return true;
     }
 
     function validateProposalStart(setError, state)
     {
       // TODO: validate start_epoch
       setError("Proposal start date is invalid");
+      return false;
     }
 
     function validateProposalEnd(setError, state)
     {
       // TODO: validate end_epoch
       setError("Number of payment cycles must be between 1 and 26");
+      return false;
     }
 
     function validateProposalAddress(setError, state)
@@ -139,7 +147,9 @@ class App extends Component
       if (!payment_address.match(prefixRegex) || (payment_address.length !== 34))
       {
         setError("Payment address is not valid");
+        return false;
       }
+      return true;
     }
 
     function validateProposalAmount(setError, state)
@@ -150,30 +160,36 @@ class App extends Component
       if (payment_amount > maximumBudgetAmount)
       {
         setError("Payment amount exceeds maximum budget");
+        return false;
       }
       if (payment_amount <= 0)
       {
         setError("Payment amount must be greater than 0");
+        return false;
       }
+      return true;
     }
 
     function validateProposalType(setError, state)
     {
-      if (state.gobj[0][1]['type'] !== '1')
+      if (state.gobj[0][1]['type'] !== 1)
       {
         setError("Proposal type must be equal to 1");
+        return false;
       }
+      return true;
     }
 
     // clear the error state and begin validation
     this.setError("");
-    validateProposalName(this.setError, this.state);
-    validateProposalURL(this.setError, this.state);
-    //validateProposalStart(this.setError, this.state);
-    //validateProposalEnd(this.setError, this.state);
-    validateProposalAddress(this.setError, this.state);
-    validateProposalAmount(this.setError, this.state);
-    validateProposalType(this.setError, this.state);
+    let result = true;
+    result = result && validateProposalName(this.setError, this.state);
+    result = result && validateProposalURL(this.setError, this.state);
+    //result = result && validateProposalStart(this.setError, this.state);
+    //result = result && validateProposalEnd(this.setError, this.state);
+    result = result && validateProposalAddress(this.setError, this.state);
+    result = result && validateProposalAmount(this.setError, this.state);
+    result = result && validateProposalType(this.setError, this.state);
   }
 
   handleInputChange(event)
@@ -192,8 +208,7 @@ class App extends Component
 
     let new_gobj = this.state.gobj;
     new_gobj[0][1][name] = value;
-    this.setState({gobj: new_gobj});
-    this.validateNewState();
+    this.setState({gobj: new_gobj}, this.validateNewState());
   }
 
   render()
