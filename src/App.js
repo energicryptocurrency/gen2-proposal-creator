@@ -33,7 +33,6 @@ class App extends Component
 
     // reference to internal proposal data we need to modify for convenience
     this.state = {
-      network: "test60x",
       gobj: [
         [
           "proposal",
@@ -52,17 +51,21 @@ class App extends Component
       bestBlock: {},
       validationError: ""
     }
+
+    this.explorerAPI = '';
+
     this.setError = this.setError.bind(this);
     this.hasError = this.hasError.bind(this);
     this.validateNewState = this.validateNewState.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.getGovernanceInfo = this.getGovernanceInfo.bind(this);
     this.getBestBlock = this.getBestBlock.bind(this);
+    this.updateNetwork = this.updateNetwork.bind(this);
   }
 
   getGovernanceInfo()
   {
-    return fetch('http://explore.test60x.energi.network/api/getgovernanceinfo')
+    return fetch(this.explorerAPI + 'getgovernanceinfo')
     .then((resp) => {
       if (resp.ok) {
         return resp.json()
@@ -83,7 +86,7 @@ class App extends Component
   {
     function getBlock(hash)
     {
-      return fetch('http://explore.test60x.energi.network/api/getblock?hash=' + hash)
+      return fetch(this.explorerAPI + 'getblock?hash=' + hash)
       .then((resp) => {
         if (resp.ok) {
           return resp.json()
@@ -102,7 +105,7 @@ class App extends Component
 
     function getHash(height)
     {
-      return fetch('http://explore.test60x.energi.network/api/getblockhash?index=' + Number(height).toString())
+      return fetch(this.explorerAPI + 'getblockhash?index=' + Number(height).toString())
       .then((resp) => {
         if (resp.ok) {
           return resp.text()
@@ -121,7 +124,7 @@ class App extends Component
 
     function getHeight()
     {
-      return fetch('http://explore.test60x.energi.network/api/getblockcount')
+      return fetch(this.explorerAPI + 'getblockcount')
       .then((resp) => {
         if (resp.ok) {
           return resp.text()
@@ -143,11 +146,32 @@ class App extends Component
     getHeight();
   }
 
+  updateNetwork(networkName)
+  {
+    function fetchBlockchainInfo()
+    {
+      this.getGovernanceInfo();
+      this.getBestBlock();
+    }
+
+    fetchBlockchainInfo = fetchBlockchainInfo.bind(this);
+
+    this.setState({network: networkName}, function()
+    {
+      if (this.state.network === 'main') this.explorerAPI = 'https://explore.energi.network/api/';
+      else if (this.state.network == 'test') this.explorerAPI = 'http://explore.test.energi.network/api/';
+      else if (this.state.network === 'test60x') this.explorerAPI = 'http://explore.test60x.energi.network/api/';
+      else this.setError("Invalid network");
+
+      fetchBlockchainInfo();
+    });
+  }
+
   componentDidMount()
   {
     document.title = "Energi Proposal Creator";
-    this.getGovernanceInfo();
-    this.getBestBlock();
+
+    this.updateNetwork('test60x');
   }
 
   setError(errStr)
