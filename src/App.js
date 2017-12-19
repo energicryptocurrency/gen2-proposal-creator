@@ -313,7 +313,9 @@ class App extends Component
   {
     let prepareform_props = {
       onChange: this.handleInputChange,
-      validationError: this.state.validationError
+      validationError: this.state.validationError,
+      governanceInfo: this.state.governanceInfo,
+      bestBlock: this.state.bestBlock
     };
     return (
       <div className="App">

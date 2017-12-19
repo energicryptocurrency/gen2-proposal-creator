@@ -24,20 +24,32 @@ import React, { Component } from 'react';
 
 class SelectFirstPayment extends Component
 {
-  /*
   constructor(props)
   {
     super(props);
+    this.getBudgetCycleStartDates = this.getBudgetCycleStartDates.bind(this);
   }
-  */
 
   getBudgetCycleStartDates()
   {
-    let budgetCycleStartDates = [ 0, 1, 2, 3 ];
+    let gov = this.props.governanceInfo;
+    let block = this.props.bestBlock;
+    let nextSuperblockTime = ((gov.nextsuperblock - block.height) * 60) + block.time;
+    const budgetCycleTimeperiod = (gov.superblockcycle * 60);
+    let budgetCycleStartDates = [];
+
+    for (let i = 0; i < 26; i++)
+    {
+      budgetCycleStartDates.push(nextSuperblockTime + (i * budgetCycleTimeperiod));
+    }
+
     let htmlOptionTags = [];
     for (let i = 0; i < budgetCycleStartDates.length; i++)
     {
-      htmlOptionTags.push(<option key={i} value={i}>{i}</option>);
+      let thisCycleDate = budgetCycleStartDates[i];
+      let thisCycleDateStr = new Date();
+      thisCycleDateStr.setTime(thisCycleDate * 1000);
+      htmlOptionTags.push(<option value={thisCycleDate}>{thisCycleDateStr.toString()}</option>);
     }
     return htmlOptionTags;
   }
@@ -49,7 +61,7 @@ class SelectFirstPayment extends Component
       <div>
         <label>
           Payment Date:
-          <select name="start_epoch" {...props}>
+          <select name="start_epoch" onChange={props.onChange}>
             { this.getBudgetCycleStartDates() }
           </select>
         </label>
