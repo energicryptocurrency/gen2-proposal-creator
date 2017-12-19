@@ -53,6 +53,7 @@ class App extends Component
     }
 
     this.explorerAPI = '';
+    this.apiSyncState = 0;
 
     this.setError = this.setError.bind(this);
     this.hasError = this.hasError.bind(this);
@@ -61,6 +62,7 @@ class App extends Component
     this.getGovernanceInfo = this.getGovernanceInfo.bind(this);
     this.getBestBlock = this.getBestBlock.bind(this);
     this.updateNetwork = this.updateNetwork.bind(this);
+    this.initializeEpochs = this.initializeEpochs.bind(this);
   }
 
   getGovernanceInfo()
@@ -70,7 +72,13 @@ class App extends Component
       if (resp.ok) {
         return resp.json()
           .then((responseData) => {
-            this.setState({governanceInfo: responseData});
+            this.setState({governanceInfo: responseData},
+              function()
+              {
+                this.apiSyncState++;
+                if (this.apiSyncState == 2) this.initializeEpochs();
+              }
+            );
             return responseData;
           });
       }
@@ -91,7 +99,13 @@ class App extends Component
         if (resp.ok) {
           return resp.json()
             .then((responseData) => {
-              this.setState({bestBlock: responseData});
+              this.setState({bestBlock: responseData},
+                function()
+                {
+                  this.apiSyncState++;
+                  if (this.apiSyncState == 2) this.initializeEpochs();
+                }
+              );
               return responseData;
             });
         }
@@ -165,6 +179,29 @@ class App extends Component
 
       fetchBlockchainInfo();
     });
+  }
+
+  initializeEpochs()
+  {
+    function sleep(ms)
+    {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function waitForSync()
+    {
+      while (this.apiSyncState != 2) await sleep(100);
+    }
+
+    waitForSync();
+    let gov = this.state.governanceInfo;
+    let block = this.state.bestBlock;
+    let initial_epoch = ((gov.nextsuperblock - block.height) * 60) + block.time;
+
+    let new_gobj = this.state.gobj;
+    new_gobj[0][1].start_epoch = initial_epoch;
+    new_gobj[0][1].end_epoch = initial_epoch;
+    this.setState({gobj: new_gobj}, this.validateNewState());
   }
 
   componentDidMount()
