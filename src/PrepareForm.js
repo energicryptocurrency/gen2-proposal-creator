@@ -42,6 +42,12 @@ class PrepareForm extends Component
       bestBlock: this.props.bestBlock
     };
 
+    let paymentCycles_props = {
+      governanceInfo: this.props.governanceInfo,
+      bestBlock: this.props.bestBlock,
+      gobj: this.props.gobj
+    };
+
     return (
         <div className="App-prepareForm">
         <div>
@@ -49,7 +55,7 @@ class PrepareForm extends Component
             <TextInputField fieldLabel="Proposal Name" fieldName="name" onChange={this.props.onChange} />
             <TextInputField fieldLabel="Proposal Description URL" fieldName="url" onChange={this.props.onChange} />
             <SelectFirstPayment {...firstPayment_props} onChange={this.props.onChange} />
-            <SelectPaymentCycles onChange={this.props.onChange} />
+            <SelectPaymentCycles {...paymentCycles_props} onChange={this.props.onChange} />
             <TextInputField fieldLabel="Payment Address" fieldName="payment_address" onChange={this.props.onChange} />
             <TextInputField fieldLabel="Payment Amount" fieldName="payment_amount" onChange={this.props.onChange} />
           </form>

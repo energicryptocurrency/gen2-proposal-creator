@@ -29,6 +29,7 @@ class SelectPaymentCycles extends Component
     super(props);
 
     this.maximumNumberOfPaymentCycles = 26;
+    this.getNumberOfPayments = this.getNumberOfPayments.bind(this);
   }
 
   getNumberOfPayments()
@@ -42,7 +43,9 @@ class SelectPaymentCycles extends Component
       let paymentStr = 'Payments';
       if (i === 1) paymentStr = 'Payment';
 
-      htmlOptionTags.push(<option key={i} value={i}>{i} {paymentStr}</option>);
+      let end_epoch = this.props.gobj[0][1].start_epoch + (((i-1) * this.props.governanceInfo.superblockcycle) * 60);
+
+      htmlOptionTags.push(<option value={end_epoch}>{i} {paymentStr}</option>);
     }
     return htmlOptionTags;
   }
@@ -54,7 +57,7 @@ class SelectPaymentCycles extends Component
       <div>
         <label>
           Payments:
-          <select name="end_epoch" {...props}>
+          <select name="end_epoch" onChange={props.onChange} onLoad={props.onChange}>
             { this.getNumberOfPayments() }
           </select>
         </label>

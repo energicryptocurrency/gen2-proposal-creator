@@ -315,7 +315,8 @@ class App extends Component
       onChange: this.handleInputChange,
       validationError: this.state.validationError,
       governanceInfo: this.state.governanceInfo,
-      bestBlock: this.state.bestBlock
+      bestBlock: this.state.bestBlock,
+      gobj: this.state.gobj
     };
     return (
       <div className="App">
