@@ -24,8 +24,9 @@
 
 .App-prepareForm
 {
-  text-align: left;
+  /*text-align: left;*/
   font-size: large;
+  margin: auto;
 }
 
 .App-validationErrorDiv
@@ -43,5 +44,9 @@
 
 .App-preparedProposalDiv
 {
+  width: 61.8%;
+  margin: auto;
+  word-wrap: break-word;
   font-size: medium;
+  background-color: #f0f0f0;
 }
