@@ -24,13 +24,12 @@ import React, { Component } from 'react';
 
 class SelectPaymentCycles extends Component
 {
+  /*
   constructor(props)
   {
     super(props);
-
-    this.maximumNumberOfPaymentCycles = 26;
-    this.getNumberOfPayments = this.getNumberOfPayments.bind(this);
   }
+  */
 
   getNumberOfPayments()
   {

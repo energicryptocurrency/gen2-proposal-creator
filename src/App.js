@@ -261,16 +261,35 @@ class App extends Component
 
     function validateProposalStart(setError, state)
     {
-      // TODO: validate start_epoch
-      setError("Proposal start date is invalid");
-      return false;
+      const expectedStartDate = ((state.governanceInfo.nextsuperblock - state.bestBlock.height) * 60) + state.bestBlock.time;
+      const maxStartDate = expectedStartDate + (state.governanceInfo.superblockcycle * 26 * 60);
+
+      if (state.gobj[0][1].start_epoch < expectedStartDate)
+      {
+        setError("Please select a valid payment date.");
+        return false;
+      }
+      if (state.gobj[0][1].start_epoch > maxStartDate)
+      {
+        setError("Please select a valid payment date.");
+        return false;
+      }
+      return true;
     }
 
     function validateProposalEnd(setError, state)
     {
-      // TODO: validate end_epoch
-      setError("Number of payment cycles must be between 1 and 26");
-      return false;
+      if ((state.payment_cycles < 1) || (state.payment_cycles > 26))
+      {
+        setError("Number of payment cycles must be between 1 and 26");
+        return false;
+      }
+      if (state.gobj[0][1].end_epoch < state.gobj[0][1].start_epoch)
+      {
+        setError("Please select a valid payment date.");
+        return false;
+      }
+      return true;
     }
 
     function validateProposalAddress(setError, state)
@@ -321,8 +340,8 @@ class App extends Component
     let result = true;
     result = result && validateProposalName(this.setError, this.state);
     result = result && validateProposalURL(this.setError, this.state);
-    //result = result && validateProposalStart(this.setError, this.state);
-    //result = result && validateProposalEnd(this.setError, this.state);
+    result = result && validateProposalStart(this.setError, this.state);
+    result = result && validateProposalEnd(this.setError, this.state);
     result = result && validateProposalAddress(this.setError, this.state);
     result = result && validateProposalAmount(this.setError, this.state);
     result = result && validateProposalType(this.setError, this.state);
