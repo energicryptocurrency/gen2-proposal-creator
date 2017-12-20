@@ -24,6 +24,7 @@ import React, { Component } from 'react';
 import TextInputField from './TextInputField.js';
 import SelectFirstPayment from './SelectFirstPayment.js';
 import SelectPaymentCycles from './SelectPaymentCycles.js';
+import DisplayTotal from './DisplayTotal.js';
 import ValidationError from './ValidationError.js';
 
 class PrepareForm extends Component
@@ -54,6 +55,7 @@ class PrepareForm extends Component
             <TextInputField fieldLabel="Payment Amount" fieldName="payment_amount" onChange={this.props.onChange} />
           </form>
         </div>
+        <DisplayTotal {...this.props} />
         <ValidationError error={this.props.validationError} />
         </div>
     );

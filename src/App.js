@@ -384,7 +384,8 @@ class App extends Component
       validationError: this.state.validationError,
       governanceInfo: this.state.governanceInfo,
       bestBlock: this.state.bestBlock,
-      gobj: this.state.gobj
+      gobj: this.state.gobj,
+      payment_cycles: this.state.payment_cycles
     };
     return (
       <div className="App">

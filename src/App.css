@@ -34,3 +34,9 @@
   color: red;
   font-weight: bold;
 }
+
+.App-displayTotalDiv
+{
+  font-size: large;
+  font-weight: bold;
+}
