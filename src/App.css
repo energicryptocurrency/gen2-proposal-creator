@@ -49,4 +49,9 @@
   word-wrap: break-word;
   font-size: medium;
   background-color: #f0f0f0;
+  text-align: left;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
