@@ -233,10 +233,10 @@ class App extends Component
         setError("Proposal name must a unique name between 5 and 20 characters in length");
         return false;
       }
-      let allowedCharactersRegex = /^[a-zA-Z0-9 _]+$/i;
+      let allowedCharactersRegex = /^[a-z0-9_-]+$/i;
       if (!name.match(allowedCharactersRegex))
       {
-        setError("Proposal name may only contain alphanumeric characters, space and underscore");
+        setError("Proposal name may only contain alphanumeric characters, underscores and hypens.");
         return false;
       }
       // TODO: make sure proposal name doesn't match any active proposal names
