@@ -28,6 +28,7 @@ import DisplayTotal from './DisplayTotal.js';
 import ValidationError from './ValidationError.js';
 import PreparedProposal from './PreparedProposal.js';
 import WaitForConfirmationsMessage from './WaitForConfirmationsMessage.js';
+import SubmitProposalForm from './SubmitProposalForm.js';
 
 class PrepareForm extends Component
 {
@@ -72,6 +73,9 @@ class PrepareForm extends Component
           <div>
             <PreparedProposal {...this.props} />
             <WaitForConfirmationsMessage {...confirmationsMessage_props} />
+          </div>
+          <div>
+            <SubmitProposalForm {...this.props} />
           </div>
         </div>
     );

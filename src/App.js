@@ -432,7 +432,9 @@ class App extends Component
 
   handleSubmit(/*event*/)
   {
-    this.setState({submitted: true}, this.validateNewState());
+    const dateTime = new Date().getTime();
+    const timestamp = Math.floor(dateTime / 1000);
+    this.setState({submitted: true, proposalTime: timestamp}, this.validateNewState());
   }
 
   render()
@@ -447,7 +449,8 @@ class App extends Component
       payment_cycles: this.state.payment_cycles,
       submitted: this.state.submitted,
       collateral_txhash: this.state.collateral_txhash,
-      confirmations: this.state.confirmations
+      confirmations: this.state.confirmations,
+      proposalTime: this.state.proposalTime
     };
     return (
       <div className="App">

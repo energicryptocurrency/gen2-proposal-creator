@@ -38,7 +38,7 @@ class PreparedProposal extends Component
       return str.replace(/./g, c => c.charCodeAt(0).toString(16));
     }
 
-    return "gobject prepare 0 1 " + this.props.gobj[0][1].start_epoch + " " + to_hex(JSON.stringify(this.props.gobj));
+    return "gobject prepare 0 1 " + this.props.proposalTime + " " + to_hex(JSON.stringify(this.props.gobj));
   }
 
   render()
@@ -57,6 +57,10 @@ class PreparedProposal extends Component
         </div>
         <p>After preparing the proposal, you will receive a transaction hash for the collateral transaction.</p>
         <TextInputField fieldLabel="Please paste your transaction hash here" fieldName="collateral_txhash" onChange={this.props.onChange} />
+        <p>
+          When your transaction hash is confirmed, you will receive instructions to submit your proposal.
+          Please do not refresh or navigate away from this page until you have submitted your proposal!
+        </p>
       </div>
     );
   }
