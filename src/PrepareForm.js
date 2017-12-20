@@ -27,6 +27,7 @@ import SelectPaymentCycles from './SelectPaymentCycles.js';
 import DisplayTotal from './DisplayTotal.js';
 import ValidationError from './ValidationError.js';
 import PreparedProposal from './PreparedProposal.js';
+import WaitForConfirmationsMessage from './WaitForConfirmationsMessage.js';
 
 class PrepareForm extends Component
 {
@@ -42,6 +43,11 @@ class PrepareForm extends Component
     let firstPayment_props = {
       governanceInfo: this.props.governanceInfo,
       bestBlock: this.props.bestBlock
+    };
+
+    let confirmationsMessage_props = {
+      confirmations: this.props.confirmations,
+      collateral_txhash: this.props.collateral_txhash
     };
 
     return (
@@ -65,6 +71,7 @@ class PrepareForm extends Component
           </div>
           <div>
             <PreparedProposal {...this.props} />
+            <WaitForConfirmationsMessage {...confirmationsMessage_props} />
           </div>
         </div>
     );

@@ -21,6 +21,7 @@
 */
 
 import React, { Component } from 'react';
+import TextInputField from './TextInputField.js';
 
 class PreparedProposal extends Component
 {
@@ -47,10 +48,15 @@ class PreparedProposal extends Component
     if (!this.props.submitted || (this.props.validationError !== '')) return null;
 
     return (
-      <div class="App-preparedProposalDiv">
-        <p>
-          {this.getPrepareProposalCmd()}
-        </p>
+      <div>
+        <p>Please copy the following into the debug console of your local wallet to prepare the proposal.</p>
+        <div class="App-preparedProposalDiv">
+          <p>
+            {this.getPrepareProposalCmd()}
+          </p>
+        </div>
+        <p>After preparing the proposal, you will receive a transaction hash for the collateral transaction.</p>
+        <TextInputField fieldLabel="Please paste your transaction hash here" fieldName="collateral_txhash" onChange={this.props.onChange} />
       </div>
     );
   }

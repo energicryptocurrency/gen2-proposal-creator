@@ -51,7 +51,8 @@ class App extends Component
       governanceInfo: {},
       bestBlock: {},
       validationError: "",
-      submitted: false
+      submitted: false,
+      confirmations: 0
     }
 
     this.explorerAPI = '';
@@ -60,6 +61,7 @@ class App extends Component
     this.setError = this.setError.bind(this);
     this.hasError = this.hasError.bind(this);
     this.validateNewState = this.validateNewState.bind(this);
+    this.waitForConfirmations = this.waitForConfirmations.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getGovernanceInfo = this.getGovernanceInfo.bind(this);
@@ -349,35 +351,83 @@ class App extends Component
     result = result && validateProposalType(this.setError, this.state);
   }
 
+  waitForConfirmations()
+  {
+    function fetchConfirmations()
+    {
+      return fetch(this.explorerAPI + 'getrawtransaction?txid=' + this.state.collateral_txhash + '&decrypt=1')
+      .then((resp) => {
+        if (resp.ok) {
+          return resp.json()
+            .then((responseData) => {
+              this.setState({confirmations: responseData.confirmations});
+              return responseData.confirmations;
+            });
+        }
+        return resp.json()
+          .then((error) => {
+            return Promise.reject(error);
+          });
+      })
+      .catch(err => {this.setState({confirmations: 0, fetchConfirmationsErr: err.toString()})});
+    }
+
+    function sleep(ms)
+    {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function checkConfirmations()
+    {
+      while (this.state.confirmations < 6)
+      {
+        fetchConfirmations();
+        await sleep(60000); // check once per minute since Energi has 1 minute block times
+      }
+    }
+
+    fetchConfirmations = fetchConfirmations.bind(this);
+    checkConfirmations = checkConfirmations.bind(this);
+
+    checkConfirmations();
+  }
+
   handleInputChange(event)
   {
     const target = event.target;
     let value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
-    // make sure numbers are numbers
-    if ((name === 'start_epoch')
-      || (name === 'end_epoch')
-      || (name === 'payment_amount'))
+    if (name === 'collateral_txhash')
     {
-        value = Number(value) || 0;
+      this.setState({collateral_txhash: value}, this.waitForConfirmations);
     }
-
-    let new_state =
+    else
     {
-      gobj: this.state.gobj,
-      payment_cycles: this.state.payment_cycles,
-      submitted: false
-    };
+      // make sure numbers are numbers
+      if ((name === 'start_epoch')
+        || (name === 'end_epoch')
+        || (name === 'payment_amount'))
+      {
+          value = Number(value) || 0;
+      }
 
-    new_state.gobj[0][1][name] = value;
-    if ((name === 'start_epoch') || (name === 'end_epoch'))
-    {
-      if (name === 'end_epoch') new_state.payment_cycles = value;
-      new_state.gobj[0][1].end_epoch = new_state.gobj[0][1].start_epoch + (new_state.payment_cycles * this.state.governanceInfo.superblockcycle * 60);
+      let new_state =
+      {
+        gobj: this.state.gobj,
+        payment_cycles: this.state.payment_cycles,
+        submitted: false
+      };
+
+      new_state.gobj[0][1][name] = value;
+      if ((name === 'start_epoch') || (name === 'end_epoch'))
+      {
+        if (name === 'end_epoch') new_state.payment_cycles = value;
+        new_state.gobj[0][1].end_epoch = new_state.gobj[0][1].start_epoch + (new_state.payment_cycles * this.state.governanceInfo.superblockcycle * 60);
+      }
+
+      this.setState(new_state, this.validateNewState());
     }
-
-    this.setState(new_state, this.validateNewState());
   }
 
   handleSubmit(/*event*/)
@@ -395,7 +445,9 @@ class App extends Component
       bestBlock: this.state.bestBlock,
       gobj: this.state.gobj,
       payment_cycles: this.state.payment_cycles,
-      submitted: this.state.submitted
+      submitted: this.state.submitted,
+      collateral_txhash: this.state.collateral_txhash,
+      confirmations: this.state.confirmations
     };
     return (
       <div className="App">
