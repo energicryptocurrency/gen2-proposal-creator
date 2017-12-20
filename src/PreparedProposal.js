@@ -59,6 +59,7 @@ class PreparedProposal extends Component
         <TextInputField fieldLabel="Please paste your transaction hash here" fieldName="collateral_txhash" onChange={this.props.onChange} />
         <p>
           When your transaction hash is confirmed, you will receive instructions to submit your proposal.
+          <br />
           Please do not refresh or navigate away from this page until you have submitted your proposal!
         </p>
       </div>

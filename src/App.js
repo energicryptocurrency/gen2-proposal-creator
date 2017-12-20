@@ -383,7 +383,7 @@ class App extends Component
       while (this.state.confirmations < 6)
       {
         fetchConfirmations();
-        await sleep(60000); // check once per minute since Energi has 1 minute block times
+        await sleep(30000); // check every 30 seconds since Energi has 1 minute block times
       }
     }
 
