@@ -460,6 +460,12 @@ class App extends Component
           <h1 className="App-title">Energi Proposal Creator</h1>
         </header>
         <PrepareForm {...prepareform_props} />
+      </div>
+    );
+  }
+}
+
+/*
         <div>
           <p className="App-intro">
             Current State:
@@ -468,9 +474,6 @@ class App extends Component
             </pre>
           </p>
         </div>
-      </div>
-    );
-  }
-}
+*/
 
 export default App;
