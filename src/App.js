@@ -198,6 +198,7 @@ class App extends Component
       while (this.apiSyncState != 2) await sleep(100);
     }
 
+    waitForSync = waitForSync.bind(this);
     waitForSync();
     let gov = this.state.governanceInfo;
     let block = this.state.bestBlock;
