@@ -43,9 +43,7 @@ class SelectPaymentCycles extends Component
       let paymentStr = 'Payments';
       if (i === 1) paymentStr = 'Payment';
 
-      let end_epoch = this.props.gobj[0][1].start_epoch + (((i-1) * this.props.governanceInfo.superblockcycle) * 60);
-
-      htmlOptionTags.push(<option value={end_epoch}>{i} {paymentStr}</option>);
+      htmlOptionTags.push(<option value={i}>{i} {paymentStr}</option>);
     }
     return htmlOptionTags;
   }
@@ -57,7 +55,7 @@ class SelectPaymentCycles extends Component
       <div>
         <label>
           Payments:
-          <select name="end_epoch" onChange={props.onChange} onLoad={props.onChange}>
+          <select name="end_epoch" onChange={props.onChange}>
             { this.getNumberOfPayments() }
           </select>
         </label>

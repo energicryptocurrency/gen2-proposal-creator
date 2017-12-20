@@ -47,6 +47,7 @@ class App extends Component
           }
         ]
       ],
+      payment_cycles: 1,
       governanceInfo: {},
       bestBlock: {},
       validationError: ""
@@ -341,9 +342,20 @@ class App extends Component
         value = Number(value) || 0;
     }
 
-    let new_gobj = this.state.gobj;
-    new_gobj[0][1][name] = value;
-    this.setState({gobj: new_gobj}, this.validateNewState());
+    let new_state =
+    {
+      gobj: this.state.gobj,
+      payment_cycles: this.state.payment_cycles
+    };
+
+    new_state.gobj[0][1][name] = value;
+    if ((name === 'start_epoch') || (name === 'end_epoch'))
+    {
+      if (name === 'end_epoch') new_state.payment_cycles = value;
+      new_state.gobj[0][1].end_epoch = new_state.gobj[0][1].start_epoch + ((new_state.payment_cycles - 1) * this.state.governanceInfo.superblockcycle * 60);
+    }
+
+    this.setState(new_state, this.validateNewState());
   }
 
   render()
