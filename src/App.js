@@ -205,7 +205,7 @@ class App extends Component
 
     let new_gobj = this.state.gobj;
     new_gobj[0][1].start_epoch = initial_epoch;
-    new_gobj[0][1].end_epoch = initial_epoch;
+    new_gobj[0][1].end_epoch = initial_epoch + (gov.superblockcycle * 60);
     this.setState({gobj: new_gobj}, this.validateNewState());
   }
 
