@@ -32,7 +32,12 @@ class PreparedProposal extends Component
 
   getPrepareProposalCmd()
   {
-    return "gobject prepare 0 1 " + this.props.gobj[0][1].start_epoch + " " + JSON.stringify(this.props.gobj);
+    function to_hex(str)
+    {
+      return str.replace(/./g, c => c.charCodeAt(0).toString(16));
+    }
+
+    return "gobject prepare 0 1 " + this.props.gobj[0][1].start_epoch + " " + to_hex(JSON.stringify(this.props.gobj));
   }
 
   render()
@@ -43,9 +48,9 @@ class PreparedProposal extends Component
 
     return (
       <div class="App-preparedProposalDiv">
-        <pre>
+        <p>
           {this.getPrepareProposalCmd()}
-        </pre>
+        </p>
       </div>
     );
   }
