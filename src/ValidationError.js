@@ -38,7 +38,9 @@ class ValidationError extends Component
 
     return (
       <div class="App-validationErrorDiv">
-        Error: {props.error}
+        <p>
+          Error: {props.error}
+        </p>
       </div>
     );
   }
