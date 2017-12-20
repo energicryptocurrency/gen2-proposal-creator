@@ -18,5 +18,40 @@
 }
 
 .App-intro {
+  text-align: left;
   font-size: large;
+}
+
+.App-prepareForm
+{
+  /*text-align: left;*/
+  font-size: large;
+  margin: auto;
+}
+
+.App-validationErrorDiv
+{
+  font-size: large;
+  color: red;
+  font-weight: bold;
+}
+
+.App-displayTotalDiv
+{
+  font-size: large;
+  font-weight: bold;
+}
+
+.App-preparedProposalDiv
+{
+  width: 61.8%;
+  margin: auto;
+  word-wrap: break-word;
+  font-size: medium;
+  background-color: #f0f0f0;
+  text-align: left;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
