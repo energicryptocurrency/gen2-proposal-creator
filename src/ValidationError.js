@@ -34,7 +34,7 @@ class ValidationError extends Component
   render()
   {
     let props = this.props;
-    if (props.error === '') return null;
+    if (!props.submitted || (props.error === '')) return null;
 
     return (
       <div class="App-validationErrorDiv">

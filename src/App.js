@@ -50,7 +50,8 @@ class App extends Component
       payment_cycles: 1,
       governanceInfo: {},
       bestBlock: {},
-      validationError: ""
+      validationError: "",
+      submitted: false
     }
 
     this.explorerAPI = '';
@@ -60,6 +61,7 @@ class App extends Component
     this.hasError = this.hasError.bind(this);
     this.validateNewState = this.validateNewState.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.getGovernanceInfo = this.getGovernanceInfo.bind(this);
     this.getBestBlock = this.getBestBlock.bind(this);
     this.updateNetwork = this.updateNetwork.bind(this);
@@ -364,7 +366,8 @@ class App extends Component
     let new_state =
     {
       gobj: this.state.gobj,
-      payment_cycles: this.state.payment_cycles
+      payment_cycles: this.state.payment_cycles,
+      submitted: false
     };
 
     new_state.gobj[0][1][name] = value;
@@ -377,15 +380,22 @@ class App extends Component
     this.setState(new_state, this.validateNewState());
   }
 
+  handleSubmit(/*event*/)
+  {
+    this.setState({submitted: true}, this.validateNewState());
+  }
+
   render()
   {
     let prepareform_props = {
       onChange: this.handleInputChange,
+      onSubmit: this.handleSubmit,
       validationError: this.state.validationError,
       governanceInfo: this.state.governanceInfo,
       bestBlock: this.state.bestBlock,
       gobj: this.state.gobj,
-      payment_cycles: this.state.payment_cycles
+      payment_cycles: this.state.payment_cycles,
+      submitted: this.state.submitted
     };
     return (
       <div className="App">
@@ -394,7 +404,6 @@ class App extends Component
           <h1 className="App-title">Energi Proposal Creator</h1>
         </header>
         <PrepareForm {...prepareform_props} />
-
         <div>
           <p className="App-intro">
             Current State:

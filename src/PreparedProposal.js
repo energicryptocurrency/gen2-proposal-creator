@@ -44,7 +44,7 @@ class PreparedProposal extends Component
   {
     let props = this.props;
 
-    if (this.props.validationError !== '') return null;
+    if (!this.props.submitted || (this.props.validationError !== '')) return null;
 
     return (
       <div class="App-preparedProposalDiv">
