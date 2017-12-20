@@ -360,7 +360,8 @@ class App extends Component
         if (resp.ok) {
           return resp.json()
             .then((responseData) => {
-              this.setState({confirmations: responseData.confirmations});
+              let confirmation_count = responseData.confirmations || 0;
+              this.setState({confirmations: confirmation_count});
               return responseData.confirmations;
             });
         }
