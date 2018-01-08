@@ -24,6 +24,7 @@ import React, { Component } from 'react';
 import TextInputField from './TextInputField.js';
 import SelectFirstPayment from './SelectFirstPayment.js';
 import SelectPaymentCycles from './SelectPaymentCycles.js';
+import SelectNetwork from './SelectNetwork.js';
 import DisplayTotal from './DisplayTotal.js';
 import ValidationError from './ValidationError.js';
 import PreparedProposal from './PreparedProposal.js';
@@ -59,6 +60,7 @@ class PrepareForm extends Component
                 <TextInputField fieldLabel="Proposal Name" fieldName="name" onChange={this.props.onChange} />
                 <TextInputField fieldLabel="Proposal Description URL" fieldName="url" onChange={this.props.onChange} />
                 <SelectFirstPayment {...firstPayment_props} onChange={this.props.onChange} />
+                <SelectNetwork onChange={this.props.onChange} />
                 <SelectPaymentCycles onChange={this.props.onChange} />
                 <TextInputField fieldLabel="Payment Address" fieldName="payment_address" onChange={this.props.onChange} />
                 <TextInputField fieldLabel="Payment Amount" fieldName="payment_amount" onChange={this.props.onChange} />
