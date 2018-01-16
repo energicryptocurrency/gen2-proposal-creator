@@ -319,7 +319,7 @@ class App extends Component
       const payment_amount = state.gobj[0][1].payment_amount;
       if (payment_amount > maximumBudgetAmount)
       {
-        setError("Payment amount exceeds maximum budget of " + maximumBudgetAmount.toString() + " EGI");
+        setError("Payment amount exceeds maximum budget of " + maximumBudgetAmount.toString() + " NRG");
         return false;
       }
       if (payment_amount <= 0)
