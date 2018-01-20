@@ -42,8 +42,6 @@ class SubmitProposalForm extends Component
 
   render()
   {
-    let props = this.props;
-
     if (this.props.confirmations < 6) return null;
 
     return (

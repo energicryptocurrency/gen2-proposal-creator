@@ -81,7 +81,7 @@ class App extends Component
               function()
               {
                 this.apiSyncState++;
-                if (this.apiSyncState == 2) this.initializeEpochs();
+                if (this.apiSyncState === 2) this.initializeEpochs();
               }
             );
             return responseData;
@@ -97,7 +97,7 @@ class App extends Component
 
   getBestBlock()
   {
-    function getBlock(hash)
+    var getBlock = function(hash)
     {
       return fetch(this.explorerAPI + 'getblock?hash=' + hash)
       .then((resp) => {
@@ -108,7 +108,7 @@ class App extends Component
                 function()
                 {
                   this.apiSyncState++;
-                  if (this.apiSyncState == 2) this.initializeEpochs();
+                  if (this.apiSyncState === 2) this.initializeEpochs();
                 }
               );
               return responseData;
@@ -122,7 +122,7 @@ class App extends Component
       .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
     }
 
-    function getHash(height)
+    var getHash = function(height)
     {
       return fetch(this.explorerAPI + 'getblockhash?index=' + Number(height).toString())
       .then((resp) => {
@@ -141,7 +141,7 @@ class App extends Component
       .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
     }
 
-    function getHeight()
+    var getHeight = function()
     {
       return fetch(this.explorerAPI + 'getblockcount')
       .then((resp) => {
@@ -167,7 +167,7 @@ class App extends Component
 
   updateNetwork(networkName)
   {
-    function fetchBlockchainInfo()
+    var fetchBlockchainInfo = function()
     {
       this.getGovernanceInfo();
       this.getBestBlock();
@@ -178,7 +178,7 @@ class App extends Component
     this.setState({network: networkName}, function()
     {
       if (this.state.network === 'main') this.explorerAPI = 'https://explore.energi.network/api/';
-      else if (this.state.network == 'test') this.explorerAPI = 'http://explore.test.energi.network/api/';
+      else if (this.state.network === 'test') this.explorerAPI = 'http://explore.test.energi.network/api/';
       else if (this.state.network === 'test60x') this.explorerAPI = 'http://explore.test60x.energi.network/api/';
       else this.setError("Invalid network");
 
@@ -193,9 +193,9 @@ class App extends Component
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async function waitForSync()
+    var waitForSync = async function()
     {
-      while (this.apiSyncState != 2) await sleep(100);
+      while (this.apiSyncState !== 2) await sleep(100);
     }
 
     waitForSync = waitForSync.bind(this);
@@ -207,7 +207,7 @@ class App extends Component
     let new_gobj = this.state.gobj;
     new_gobj[0][1].start_epoch = initial_epoch;
     new_gobj[0][1].end_epoch = initial_epoch + (gov.superblockcycle * 60);
-    this.setState({gobj: new_gobj}, this.validateNewState());
+    this.setState({gobj: new_gobj}, this.validateNewState);
   }
 
   componentDidMount()
@@ -350,11 +350,12 @@ class App extends Component
     result = result && validateProposalAddress(this.setError, this.state);
     result = result && validateProposalAmount(this.setError, this.state);
     result = result && validateProposalType(this.setError, this.state);
+    return result;
   }
 
   waitForConfirmations()
   {
-    function fetchConfirmations()
+    var fetchConfirmations = function()
     {
       return fetch(this.explorerAPI + 'getrawtransaction?txid=' + this.state.collateral_txhash + '&decrypt=1')
       .then((resp) => {
@@ -379,7 +380,7 @@ class App extends Component
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async function checkConfirmations()
+    var checkConfirmations = async function()
     {
       while (this.state.confirmations < 6)
       {
@@ -428,7 +429,7 @@ class App extends Component
         new_state.gobj[0][1].end_epoch = new_state.gobj[0][1].start_epoch + (new_state.payment_cycles * this.state.governanceInfo.superblockcycle * 60);
       }
 
-      this.setState(new_state, this.validateNewState());
+      this.setState(new_state, this.validateNewState);
     }
   }
 
@@ -436,7 +437,7 @@ class App extends Component
   {
     const dateTime = new Date().getTime();
     const timestamp = Math.floor(dateTime / 1000);
-    this.setState({submitted: true, proposalTime: timestamp}, this.validateNewState());
+    this.setState({submitted: true, proposalTime: timestamp}, this.validateNewState);
   }
 
   render()
