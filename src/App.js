@@ -405,6 +405,10 @@ class App extends Component
     {
       this.setState({collateral_txhash: value}, this.waitForConfirmations);
     }
+    else if (name === 'networkSelector')
+    {
+        this.updateNetwork(target.value);
+    }
     else
     {
       // make sure numbers are numbers
