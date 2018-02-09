@@ -8,9 +8,9 @@ class SelectNetwork extends Component
   getNetworks()
   {
     let htmlOptionTags = [];
-    htmlOptionTags.push(<option value="main"> main </option>);
-    htmlOptionTags.push(<option value="test"> test </option>);
+    //htmlOptionTags.push(<option value="main"> main </option>);
     htmlOptionTags.push(<option value="test60x"> test60x </option>);
+    htmlOptionTags.push(<option value="test"> test </option>);
     return htmlOptionTags;
   }
 
