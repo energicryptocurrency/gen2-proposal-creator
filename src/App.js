@@ -98,7 +98,7 @@ class App extends Component
 
     var getSuperblockBudget = function(depth = 0)
     {
-      const maxDepth = 26;
+      const maxDepth = 52;
       const superblockNumber = this.state.governanceInfo.nextsuperblock + (depth * this.state.governanceInfo.superblockcycle);
       return fetch(this.explorerAPI + 'getsuperblockbudget/' + superblockNumber)
       .then((resp) => {
