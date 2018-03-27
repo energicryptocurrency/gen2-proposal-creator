@@ -358,7 +358,11 @@ class App extends Component
 
     function validateProposalAmount(setError, state)
     {
-      const maximumBudgetAmount = state.governanceInfo.lastsuperblock === 0 ? 4000000 : 184000;
+      const nextSuperblockTime = ((state.governanceInfo.nextsuperblock - state.bestBlock.height) * 60) + state.bestBlock.time;
+      const superblockIndex = (state.gobj[0][1].start_epoch - nextSuperblockTime) / 60 / state.governanceInfo.superblockcycle;
+      let needed_budgets = state.superblockBudgets.slice(superblockIndex, superblockIndex + state.payment_cycles);
+      const maximumBudgetAmount = Math.min(...needed_budgets);
+
       const payment_amount = state.gobj[0][1].payment_amount;
       if (payment_amount > maximumBudgetAmount)
       {
