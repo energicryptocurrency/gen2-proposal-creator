@@ -64,35 +64,78 @@ class App extends Component
     this.waitForConfirmations = this.waitForConfirmations.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.getGovernanceInfo = this.getGovernanceInfo.bind(this);
+    this.getSuperblockInfo = this.getSuperblockInfo.bind(this);
     this.getBestBlock = this.getBestBlock.bind(this);
     this.updateNetwork = this.updateNetwork.bind(this);
     this.initializeEpochs = this.initializeEpochs.bind(this);
   }
 
-  getGovernanceInfo()
+  getSuperblockInfo()
   {
-    return fetch(this.explorerAPI + 'getgovernanceinfo')
-    .then((resp) => {
-      if (resp.ok) {
+    var getGovernanceInfo = function()
+    {
+      return fetch(this.explorerAPI + 'getgovernanceinfo')
+      .then((resp) => {
+        if (resp.ok) {
+          return resp.json()
+            .then((responseData) => {
+              this.setState({governanceInfo: responseData},
+                function()
+                {
+                  getSuperblockBudget();
+                }
+              );
+              return responseData;
+            });
+        }
         return resp.json()
-          .then((responseData) => {
-            this.setState({governanceInfo: responseData},
-              function()
-              {
-                this.apiSyncState++;
-                if (this.apiSyncState === 2) this.initializeEpochs();
-              }
-            );
-            return responseData;
+          .then((error) => {
+            return Promise.reject(error);
           });
-      }
-      return resp.json()
-        .then((error) => {
-          return Promise.reject(error);
-        });
-    })
-    .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
+      })
+      .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
+    }
+
+    var getSuperblockBudget = function(depth = 0)
+    {
+      const maxDepth = 52;
+      const superblockNumber = this.state.governanceInfo.nextsuperblock + (depth * this.state.governanceInfo.superblockcycle);
+      return fetch(this.explorerAPI + 'getsuperblockbudget/' + superblockNumber)
+      .then((resp) => {
+        if (resp.ok) {
+          return resp.json()
+            .then((responseData) => {
+              var superblockBudgets = this.state.superblockBudgets || [];
+              superblockBudgets[depth] = responseData;
+              this.setState({superblockBudgets: superblockBudgets},
+                function()
+                {
+                  if (depth === (maxDepth - 1))
+                  {
+                    this.apiSyncState++;
+                    if (this.apiSyncState === 2) this.initializeEpochs();
+                  }
+                  else
+                  {
+                    getSuperblockBudget(depth + 1);
+                  }
+                }
+              );
+              return responseData;
+            });
+        }
+        return resp.json()
+          .then((error) => {
+            return Promise.reject(error);
+          });
+      })
+      .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
+    }
+
+    getGovernanceInfo = getGovernanceInfo.bind(this);
+    getSuperblockBudget = getSuperblockBudget.bind(this);
+
+    getGovernanceInfo();
   }
 
   getBestBlock()
@@ -169,7 +212,7 @@ class App extends Component
   {
     var fetchBlockchainInfo = function()
     {
-      this.getGovernanceInfo();
+      this.getSuperblockInfo();
       this.getBestBlock();
     }
 
@@ -315,7 +358,11 @@ class App extends Component
 
     function validateProposalAmount(setError, state)
     {
-      const maximumBudgetAmount = state.governanceInfo.lastsuperblock === 0 ? 4000000 : 184000;
+      const nextSuperblockTime = ((state.governanceInfo.nextsuperblock - state.bestBlock.height) * 60) + state.bestBlock.time;
+      const superblockIndex = (state.gobj[0][1].start_epoch - nextSuperblockTime) / 60 / state.governanceInfo.superblockcycle;
+      let needed_budgets = state.superblockBudgets.slice(superblockIndex, superblockIndex + state.payment_cycles);
+      const maximumBudgetAmount = Math.min(...needed_budgets);
+
       const payment_amount = state.gobj[0][1].payment_amount;
       if (payment_amount > maximumBudgetAmount)
       {
