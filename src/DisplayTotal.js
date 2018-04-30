@@ -49,7 +49,7 @@ class DisplayTotal extends Component
     const start_epoch = this.props.gobj[0][1].start_epoch;
     const end_epoch = this.props.gobj[0][1].end_epoch;
 
-    if (this.props.payment_cycles == 1)
+    if (this.props.payment_cycles === 1)
     {
       return "at " + format_date(start_epoch);
     }
@@ -59,13 +59,11 @@ class DisplayTotal extends Component
 
   render()
   {
-    let props = this.props;
-
     if (this.props.gobj[0][1].payment_amount <= 0) return null;
 
     return (
       <div class="App-displayTotalDiv">
-        Total: {this.get_total()} EGI {this.get_date_str()}
+        Total: {this.get_total()} NRG {this.get_date_str()}
       </div>
     );
   }

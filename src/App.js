@@ -64,51 +64,25 @@ class App extends Component
     this.waitForConfirmations = this.waitForConfirmations.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.getGovernanceInfo = this.getGovernanceInfo.bind(this);
+    this.getSuperblockInfo = this.getSuperblockInfo.bind(this);
     this.getBestBlock = this.getBestBlock.bind(this);
     this.updateNetwork = this.updateNetwork.bind(this);
     this.initializeEpochs = this.initializeEpochs.bind(this);
   }
 
-  getGovernanceInfo()
+  getSuperblockInfo()
   {
-    return fetch(this.explorerAPI + 'getgovernanceinfo')
-    .then((resp) => {
-      if (resp.ok) {
-        return resp.json()
-          .then((responseData) => {
-            this.setState({governanceInfo: responseData},
-              function()
-              {
-                this.apiSyncState++;
-                if (this.apiSyncState == 2) this.initializeEpochs();
-              }
-            );
-            return responseData;
-          });
-      }
-      return resp.json()
-        .then((error) => {
-          return Promise.reject(error);
-        });
-    })
-    .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
-  }
-
-  getBestBlock()
-  {
-    function getBlock(hash)
+    var getGovernanceInfo = function()
     {
-      return fetch(this.explorerAPI + 'getblock?hash=' + hash)
+      return fetch(this.explorerAPI + 'getgovernanceinfo')
       .then((resp) => {
         if (resp.ok) {
           return resp.json()
             .then((responseData) => {
-              this.setState({bestBlock: responseData},
+              this.setState({governanceInfo: responseData},
                 function()
                 {
-                  this.apiSyncState++;
-                  if (this.apiSyncState == 2) this.initializeEpochs();
+                  getSuperblockBudget();
                 }
               );
               return responseData;
@@ -122,7 +96,76 @@ class App extends Component
       .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
     }
 
-    function getHash(height)
+    var getSuperblockBudget = function(depth = 0)
+    {
+      const maxDepth = 52;
+      const superblockNumber = this.state.governanceInfo.nextsuperblock + (depth * this.state.governanceInfo.superblockcycle);
+      return fetch(this.explorerAPI + 'getsuperblockbudget/' + superblockNumber)
+      .then((resp) => {
+        if (resp.ok) {
+          return resp.json()
+            .then((responseData) => {
+              var superblockBudgets = this.state.superblockBudgets || [];
+              superblockBudgets[depth] = responseData;
+              this.setState({superblockBudgets: superblockBudgets},
+                function()
+                {
+                  if (depth === (maxDepth - 1))
+                  {
+                    this.apiSyncState++;
+                    if (this.apiSyncState === 2) this.initializeEpochs();
+                  }
+                  else
+                  {
+                    getSuperblockBudget(depth + 1);
+                  }
+                }
+              );
+              return responseData;
+            });
+        }
+        return resp.json()
+          .then((error) => {
+            return Promise.reject(error);
+          });
+      })
+      .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
+    }
+
+    getGovernanceInfo = getGovernanceInfo.bind(this);
+    getSuperblockBudget = getSuperblockBudget.bind(this);
+
+    getGovernanceInfo();
+  }
+
+  getBestBlock()
+  {
+    var getBlock = function(hash)
+    {
+      return fetch(this.explorerAPI + 'getblock?hash=' + hash)
+      .then((resp) => {
+        if (resp.ok) {
+          return resp.json()
+            .then((responseData) => {
+              this.setState({bestBlock: responseData},
+                function()
+                {
+                  this.apiSyncState++;
+                  if (this.apiSyncState === 2) this.initializeEpochs();
+                }
+              );
+              return responseData;
+            });
+        }
+        return resp.json()
+          .then((error) => {
+            return Promise.reject(error);
+          });
+      })
+      .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
+    }
+
+    var getHash = function(height)
     {
       return fetch(this.explorerAPI + 'getblockhash?index=' + Number(height).toString())
       .then((resp) => {
@@ -141,7 +184,7 @@ class App extends Component
       .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
     }
 
-    function getHeight()
+    var getHeight = function()
     {
       return fetch(this.explorerAPI + 'getblockcount')
       .then((resp) => {
@@ -167,9 +210,9 @@ class App extends Component
 
   updateNetwork(networkName)
   {
-    function fetchBlockchainInfo()
+    var fetchBlockchainInfo = function()
     {
-      this.getGovernanceInfo();
+      this.getSuperblockInfo();
       this.getBestBlock();
     }
 
@@ -178,8 +221,8 @@ class App extends Component
     this.setState({network: networkName}, function()
     {
       if (this.state.network === 'main') this.explorerAPI = 'https://explore.energi.network/api/';
-      else if (this.state.network == 'test') this.explorerAPI = 'http://explore.test.energi.network/api/';
-      else if (this.state.network === 'test60x') this.explorerAPI = 'http://explore.test60x.energi.network/api/';
+      else if (this.state.network === 'test') this.explorerAPI = 'https://explore.test.energi.network/api/';
+      //else if (this.state.network === 'test60x') this.explorerAPI = 'https://explore.test60x.energi.network/api/';
       else this.setError("Invalid network");
 
       fetchBlockchainInfo();
@@ -193,9 +236,9 @@ class App extends Component
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async function waitForSync()
+    var waitForSync = async function()
     {
-      while (this.apiSyncState != 2) await sleep(100);
+      while (this.apiSyncState !== 2) await sleep(100);
     }
 
     waitForSync = waitForSync.bind(this);
@@ -207,14 +250,14 @@ class App extends Component
     let new_gobj = this.state.gobj;
     new_gobj[0][1].start_epoch = initial_epoch;
     new_gobj[0][1].end_epoch = initial_epoch + (gov.superblockcycle * 60);
-    this.setState({gobj: new_gobj}, this.validateNewState());
+    this.setState({gobj: new_gobj}, this.validateNewState);
   }
 
   componentDidMount()
   {
     document.title = "Energi Proposal Creator";
 
-    this.updateNetwork('test60x');
+    this.updateNetwork('main');
   }
 
   setError(errStr)
@@ -315,11 +358,15 @@ class App extends Component
 
     function validateProposalAmount(setError, state)
     {
-      const maximumBudgetAmount = state.governanceInfo.lastsuperblock === 0 ? 4000000 : 184000;
+      const nextSuperblockTime = ((state.governanceInfo.nextsuperblock - state.bestBlock.height) * 60) + state.bestBlock.time;
+      const superblockIndex = (state.gobj[0][1].start_epoch - nextSuperblockTime) / 60 / state.governanceInfo.superblockcycle;
+      let needed_budgets = state.superblockBudgets.slice(superblockIndex, superblockIndex + state.payment_cycles);
+      const maximumBudgetAmount = Math.min(...needed_budgets);
+
       const payment_amount = state.gobj[0][1].payment_amount;
       if (payment_amount > maximumBudgetAmount)
       {
-        setError("Payment amount exceeds maximum budget of " + maximumBudgetAmount.toString() + " EGI");
+        setError("Payment amount exceeds maximum budget of " + maximumBudgetAmount.toString() + " NRG");
         return false;
       }
       if (payment_amount <= 0)
@@ -350,11 +397,12 @@ class App extends Component
     result = result && validateProposalAddress(this.setError, this.state);
     result = result && validateProposalAmount(this.setError, this.state);
     result = result && validateProposalType(this.setError, this.state);
+    return result;
   }
 
   waitForConfirmations()
   {
-    function fetchConfirmations()
+    var fetchConfirmations = function()
     {
       return fetch(this.explorerAPI + 'getrawtransaction?txid=' + this.state.collateral_txhash + '&decrypt=1')
       .then((resp) => {
@@ -379,7 +427,7 @@ class App extends Component
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async function checkConfirmations()
+    var checkConfirmations = async function()
     {
       while (this.state.confirmations < 6)
       {
@@ -403,6 +451,10 @@ class App extends Component
     if (name === 'collateral_txhash')
     {
       this.setState({collateral_txhash: value}, this.waitForConfirmations);
+    }
+    else if (name === 'networkSelector')
+    {
+        this.updateNetwork(target.value);
     }
     else
     {
@@ -428,7 +480,7 @@ class App extends Component
         new_state.gobj[0][1].end_epoch = new_state.gobj[0][1].start_epoch + (new_state.payment_cycles * this.state.governanceInfo.superblockcycle * 60);
       }
 
-      this.setState(new_state, this.validateNewState());
+      this.setState(new_state, this.validateNewState);
     }
   }
 
@@ -436,7 +488,7 @@ class App extends Component
   {
     const dateTime = new Date().getTime();
     const timestamp = Math.floor(dateTime / 1000);
-    this.setState({submitted: true, proposalTime: timestamp}, this.validateNewState());
+    this.setState({submitted: true, proposalTime: timestamp}, this.validateNewState);
   }
 
   render()
