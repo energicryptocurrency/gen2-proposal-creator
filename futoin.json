@@ -1,0 +1,35 @@
+{
+  "name": "proposal-creator",
+  "version": "1.0.0",
+  "vcs": "git",
+  "actions": {
+    "build": "@cid tool exec npm -- run-script build"
+  },
+  "entryPoints": {
+    "frontend": {
+      "tool": "nginx",
+      "path": "build",
+      "tune": {
+        "socketPort": 3000
+      }
+    }
+  },
+  "webcfg": {
+    "root" : "build",
+    "mounts": {
+      "/": {
+        "tune": {
+          "expires": "epoch",
+          "pattern": true,
+          "staticGzip": true
+        }
+      },
+      "/static/": {
+        "tune": {
+          "expires": "max",
+          "staticGzip": true
+        }
+      }
+    }    
+  }
+}
