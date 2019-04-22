@@ -220,9 +220,9 @@ class App extends Component
 
     this.setState({network: networkName}, function()
     {
-      if (this.state.network === 'main') this.explorerAPI = 'https://explore.energi.network/api/';
-      else if (this.state.network === 'test') this.explorerAPI = 'https://explore.test.energi.network/api/';
-      //else if (this.state.network === 'test60x') this.explorerAPI = 'https://explore.test60x.energi.network/api/';
+      if (this.state.network === 'main') this.explorerAPI = 'https://explorer.energi.network/api/';
+      else if (this.state.network === 'test') this.explorerAPI = 'https://explorer.test.energi.network/api/';
+      //else if (this.state.network === 'test60x') this.explorerAPI = 'https://explorer.test60x.energi.network/api/';
       else this.setError("Invalid network");
 
       fetchBlockchainInfo();
