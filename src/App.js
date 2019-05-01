@@ -24,6 +24,10 @@ import React, { Component } from 'react';
 import logo from './logo256.png';
 import './App.css';
 import PrepareForm from './PrepareForm.js';
+import ReactGA from 'react-ga';
+
+ReactGA.initialize('UA-123682239-4');
+ReactGA.pageview(window.location.pathname + window.location.search);
 
 class App extends Component
 {
