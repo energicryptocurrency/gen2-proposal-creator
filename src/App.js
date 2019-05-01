@@ -226,7 +226,6 @@ class App extends Component
     {
       if (this.state.network === 'main') this.explorerAPI = 'https://explorer.energi.network/api/';
       else if (this.state.network === 'test') this.explorerAPI = 'https://explorer.test.energi.network/api/';
-      //else if (this.state.network === 'test60x') this.explorerAPI = 'https://explorer.test60x.energi.network/api/';
       else this.setError("Invalid network");
 
       fetchBlockchainInfo();
