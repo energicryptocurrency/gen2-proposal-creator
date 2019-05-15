@@ -83,12 +83,7 @@ class App extends Component
         if (resp.ok) {
           return resp.json()
             .then((responseData) => {
-              this.setState({governanceInfo: responseData},
-                function()
-                {
-                  getSuperblockBudget();
-                }
-              );
+              this.setState({governanceInfo: responseData});
               return responseData;
             });
         }
@@ -100,6 +95,7 @@ class App extends Component
       .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
     }
 
+    /*
     var getSuperblockBudget = function(depth = 0)
     {
       const maxDepth = 52;
@@ -135,9 +131,10 @@ class App extends Component
       })
       .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
     }
+    */
 
     getGovernanceInfo = getGovernanceInfo.bind(this);
-    getSuperblockBudget = getSuperblockBudget.bind(this);
+    //getSuperblockBudget = getSuperblockBudget.bind(this);
 
     getGovernanceInfo();
   }
@@ -361,10 +358,12 @@ class App extends Component
 
     function validateProposalAmount(setError, state)
     {
-      const nextSuperblockTime = ((state.governanceInfo.nextsuperblock - state.bestBlock.height) * 60) + state.bestBlock.time;
-      const superblockIndex = (state.gobj[0][1].start_epoch - nextSuperblockTime) / 60 / state.governanceInfo.superblockcycle;
-      let needed_budgets = state.superblockBudgets.slice(superblockIndex, superblockIndex + state.payment_cycles);
-      const maximumBudgetAmount = Math.min(...needed_budgets);
+      // NOTE: See Note 1 at the top
+      //const nextSuperblockTime = ((state.governanceInfo.nextsuperblock - state.bestBlock.height) * 60) + state.bestBlock.time;
+      //const superblockIndex = (state.gobj[0][1].start_epoch - nextSuperblockTime) / 60 / state.governanceInfo.superblockcycle;
+      //let needed_budgets = state.superblockBudgets.slice(superblockIndex, superblockIndex + state.payment_cycles);
+      //const maximumBudgetAmount = Math.min(...needed_budgets);
+      const maximumBudgetAmount = 184000.00;
 
       const payment_amount = state.gobj[0][1].payment_amount;
       if (payment_amount > maximumBudgetAmount)
