@@ -307,6 +307,8 @@ class App extends Component
       return true;
     }
 
+    // TODO: disabled because of bad block time calculations
+    /*
     function validateProposalStart(setError, state)
     {
       const expectedStartDate = ((state.governanceInfo.nextsuperblock - state.bestBlock.height) * 60) + state.bestBlock.time;
@@ -324,7 +326,10 @@ class App extends Component
       }
       return true;
     }
+    */
 
+    // NOTE: See Note 2 at the top
+    /*
     function validateProposalEnd(setError, state)
     {
       if ((state.payment_cycles < 1) || (state.payment_cycles > 26))
@@ -339,6 +344,7 @@ class App extends Component
       }
       return true;
     }
+    */
 
     function validateProposalAddress(setError, state)
     {
@@ -394,8 +400,8 @@ class App extends Component
     let result = true;
     result = result && validateProposalName(this.setError, this.state);
     result = result && validateProposalURL(this.setError, this.state);
-    result = result && validateProposalStart(this.setError, this.state);
-    result = result && validateProposalEnd(this.setError, this.state);
+    //result = result && validateProposalStart(this.setError, this.state);
+    //result = result && validateProposalEnd(this.setError, this.state); // NOTE: See Note 2 at the top
     result = result && validateProposalAddress(this.setError, this.state);
     result = result && validateProposalAmount(this.setError, this.state);
     result = result && validateProposalType(this.setError, this.state);
@@ -476,11 +482,21 @@ class App extends Component
       };
 
       new_state.gobj[0][1][name] = value;
+
+      if (name === 'start_epoch')
+      {
+        // file the proposal to fall within +-fudge_period seconds of the estimated superblock time
+        const fudge_period = 1440 * 3 * 60;
+        new_state.gobj[0][1].start_epoch = Math.round(value - fudge_period);
+        new_state.gobj[0][1].end_epoch = Math.round(value + fudge_period);
+      }
+      // NOTE: See Note 2 at the top
+      /*
       if ((name === 'start_epoch') || (name === 'end_epoch'))
       {
         if (name === 'end_epoch') new_state.payment_cycles = value;
         new_state.gobj[0][1].end_epoch = new_state.gobj[0][1].start_epoch + (new_state.payment_cycles * this.state.governanceInfo.superblockcycle * 60);
-      }
+      }*/
 
       this.setState(new_state, this.validateNewState);
     }
