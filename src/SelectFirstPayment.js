@@ -22,20 +22,54 @@
 
 import React, { Component } from 'react';
 
+
 class SelectFirstPayment extends Component
 {
   constructor(props)
   {
     super(props);
     this.getBudgetCycleStartDates = this.getBudgetCycleStartDates.bind(this);
+    this.state = {
+      error: null,
+      isLoaded: false,
+      averageBlockTime: 60
+    };
   }
+
+  componentDidMount() {
+    fetch("https://explorer2.energi.network/api/block/average")
+        .then(res => {return res.text()})
+        .then(
+          (result) => {
+            this.setState({
+              isLoaded: true,
+              averageBlockTime: result
+            });
+          },
+          // Note: it's important to handle errors here
+          // instead of a catch() block so that we don't swallow
+          // exceptions from actual bugs in components.
+          (error) => {
+            this.setState({
+              isLoaded: true,
+              averageBlockTime: 60,
+              error
+            });
+          }
+        )
+    }
 
   getBudgetCycleStartDates()
   {
     let gov = this.props.governanceInfo;
     let block = this.props.bestBlock;
-    let nextSuperblockTime = ((gov.nextsuperblock - block.height) * 60) + block.time;
-    const budgetCycleTimeperiod = (gov.superblockcycle * 60);
+
+    const averageBlockTime = this.state.averageBlockTime;
+
+    let nextSuperblockTime = ((gov.nextsuperblock - block.height) * averageBlockTime) + block.time;
+
+
+    const budgetCycleTimeperiod = (gov.superblockcycle * averageBlockTime);
     let budgetCycleStartDates = [];
 
     for (let i = 0; i < 26; i++)
@@ -57,6 +91,13 @@ class SelectFirstPayment extends Component
   render()
   {
     let props = this.props;
+    const error = this.state.error;
+    const isLoaded = this.state.isLoaded;
+    if (error) {
+      return <div>Error: {error.message}</div>;
+    } else if (!isLoaded) {
+      return <div>Loading...</div>;
+    } else {
     return (
       <div>
         <label>
@@ -67,6 +108,7 @@ class SelectFirstPayment extends Component
         </label>
       </div>
     );
+  }
   }
 }
 

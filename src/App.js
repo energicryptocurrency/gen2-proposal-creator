@@ -20,10 +20,24 @@
 ]
 */
 
+// NOTES:
+//
+// Note 1 - The code  which fetches superblock budgets for the next 26 superblocks has been disabled.
+// The reason for this is that early on with Energi superblock cycles had a variable budget.
+// Since block 201600 the superblock budget is constant at 184000 NRG per superblock, so there is no need
+// to fetch this data anymore.
+//
+// Note 2 - The code which allows filing a treasury proposal for multiple superblocks has been disabled.2
+// This is was very rarely used and it usually makes more sense just to file  multiple proposals.
+
 import React, { Component } from 'react';
 import logo from './logo256.png';
 import './App.css';
 import PrepareForm from './PrepareForm.js';
+import ReactGA from 'react-ga';
+
+ReactGA.initialize('UA-123682239-4');
+ReactGA.pageview(window.location.pathname + window.location.search);
 
 class App extends Component
 {
@@ -79,12 +93,7 @@ class App extends Component
         if (resp.ok) {
           return resp.json()
             .then((responseData) => {
-              this.setState({governanceInfo: responseData},
-                function()
-                {
-                  getSuperblockBudget();
-                }
-              );
+              this.setState({governanceInfo: responseData});
               return responseData;
             });
         }
@@ -96,6 +105,7 @@ class App extends Component
       .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
     }
 
+    /*
     var getSuperblockBudget = function(depth = 0)
     {
       const maxDepth = 52;
@@ -131,9 +141,10 @@ class App extends Component
       })
       .catch(err => {this.setError("Unable to fetch current blockchain information. Please try again later. " + err.toString())});
     }
+    */
 
     getGovernanceInfo = getGovernanceInfo.bind(this);
-    getSuperblockBudget = getSuperblockBudget.bind(this);
+    //getSuperblockBudget = getSuperblockBudget.bind(this);
 
     getGovernanceInfo();
   }
@@ -222,7 +233,6 @@ class App extends Component
     {
       if (this.state.network === 'main') this.explorerAPI = 'https://explorer.energi.network/api/';
       else if (this.state.network === 'test') this.explorerAPI = 'https://explorer.test.energi.network/api/';
-      //else if (this.state.network === 'test60x') this.explorerAPI = 'https://explorer.test60x.energi.network/api/';
       else this.setError("Invalid network");
 
       fetchBlockchainInfo();
@@ -307,6 +317,8 @@ class App extends Component
       return true;
     }
 
+    // TODO: disabled because of bad block time calculations
+    /*
     function validateProposalStart(setError, state)
     {
       const expectedStartDate = ((state.governanceInfo.nextsuperblock - state.bestBlock.height) * 60) + state.bestBlock.time;
@@ -324,7 +336,10 @@ class App extends Component
       }
       return true;
     }
+    */
 
+    // NOTE: See Note 2 at the top
+    /*
     function validateProposalEnd(setError, state)
     {
       if ((state.payment_cycles < 1) || (state.payment_cycles > 26))
@@ -339,6 +354,7 @@ class App extends Component
       }
       return true;
     }
+    */
 
     function validateProposalAddress(setError, state)
     {
@@ -358,10 +374,12 @@ class App extends Component
 
     function validateProposalAmount(setError, state)
     {
-      const nextSuperblockTime = ((state.governanceInfo.nextsuperblock - state.bestBlock.height) * 60) + state.bestBlock.time;
-      const superblockIndex = (state.gobj[0][1].start_epoch - nextSuperblockTime) / 60 / state.governanceInfo.superblockcycle;
-      let needed_budgets = state.superblockBudgets.slice(superblockIndex, superblockIndex + state.payment_cycles);
-      const maximumBudgetAmount = Math.min(...needed_budgets);
+      // NOTE: See Note 1 at the top
+      //const nextSuperblockTime = ((state.governanceInfo.nextsuperblock - state.bestBlock.height) * 60) + state.bestBlock.time;
+      //const superblockIndex = (state.gobj[0][1].start_epoch - nextSuperblockTime) / 60 / state.governanceInfo.superblockcycle;
+      //let needed_budgets = state.superblockBudgets.slice(superblockIndex, superblockIndex + state.payment_cycles);
+      //const maximumBudgetAmount = Math.min(...needed_budgets);
+      const maximumBudgetAmount = 184000.00;
 
       const payment_amount = state.gobj[0][1].payment_amount;
       if (payment_amount > maximumBudgetAmount)
@@ -392,8 +410,8 @@ class App extends Component
     let result = true;
     result = result && validateProposalName(this.setError, this.state);
     result = result && validateProposalURL(this.setError, this.state);
-    result = result && validateProposalStart(this.setError, this.state);
-    result = result && validateProposalEnd(this.setError, this.state);
+    //result = result && validateProposalStart(this.setError, this.state);
+    //result = result && validateProposalEnd(this.setError, this.state); // NOTE: See Note 2 at the top
     result = result && validateProposalAddress(this.setError, this.state);
     result = result && validateProposalAmount(this.setError, this.state);
     result = result && validateProposalType(this.setError, this.state);
@@ -474,11 +492,21 @@ class App extends Component
       };
 
       new_state.gobj[0][1][name] = value;
+
+      if (name === 'start_epoch')
+      {
+        // file the proposal to fall within +-fudge_period seconds of the estimated superblock time
+        const fudge_period = 1440 * 3 * 60;
+        new_state.gobj[0][1].start_epoch = Math.round(value - fudge_period);
+        new_state.gobj[0][1].end_epoch = Math.round(value + fudge_period);
+      }
+      // NOTE: See Note 2 at the top
+      /*
       if ((name === 'start_epoch') || (name === 'end_epoch'))
       {
         if (name === 'end_epoch') new_state.payment_cycles = value;
         new_state.gobj[0][1].end_epoch = new_state.gobj[0][1].start_epoch + (new_state.payment_cycles * this.state.governanceInfo.superblockcycle * 60);
-      }
+      }*/
 
       this.setState(new_state, this.validateNewState);
     }
@@ -513,20 +541,21 @@ class App extends Component
           <h1 className="App-title">Energi Proposal Creator</h1>
         </header>
         <PrepareForm {...prepareform_props} />
-      </div>
-    );
-  }
-}
-
-/*
-        <div>
+        {/*<div>
           <p className="App-intro">
             Current State:
             <pre>
               { JSON.stringify(this.state, null, "\t") }
             </pre>
           </p>
-        </div>
-*/
+        </div>*/}
+      </div>
+    );
+  }
+}
+
+
+
+
 
 export default App;
