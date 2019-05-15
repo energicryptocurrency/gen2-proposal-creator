@@ -20,6 +20,16 @@
 ]
 */
 
+// NOTES:
+//
+// Note 1 - The code  which fetches superblock budgets for the next 26 superblocks has been disabled.
+// The reason for this is that early on with Energi superblock cycles had a variable budget.
+// Since block 201600 the superblock budget is constant at 184000 NRG per superblock, so there is no need
+// to fetch this data anymore.
+//
+// Note 2 - The code which allows filing a treasury proposal for multiple superblocks has been disabled.2
+// This is was very rarely used and it usually makes more sense just to file  multiple proposals.
+
 import React, { Component } from 'react';
 import logo from './logo256.png';
 import './App.css';
@@ -531,20 +541,21 @@ class App extends Component
           <h1 className="App-title">Energi Proposal Creator</h1>
         </header>
         <PrepareForm {...prepareform_props} />
-      </div>
-    );
-  }
-}
-
-/*
-        <div>
+        {/*<div>
           <p className="App-intro">
             Current State:
             <pre>
               { JSON.stringify(this.state, null, "\t") }
             </pre>
           </p>
-        </div>
-*/
+        </div>*/}
+      </div>
+    );
+  }
+}
+
+
+
+
 
 export default App;
