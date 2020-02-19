@@ -1,6 +1,6 @@
 {
   "name": "proposal-creator",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "vcs": "git",
   "actions": {
     "build": "@cid tool exec npm -- run-script build"
