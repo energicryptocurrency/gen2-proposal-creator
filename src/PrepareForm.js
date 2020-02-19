@@ -55,18 +55,17 @@ class PrepareForm extends Component
     return (
         <div className="App-prepareForm">
           <div>
-            <p>
-              <form>
-                <TextInputField fieldLabel="Proposal Name" fieldName="name" onChange={this.props.onChange} />
-                <TextInputField fieldLabel="Proposal Description URL" fieldName="url" onChange={this.props.onChange} />
-                <SelectFirstPayment {...firstPayment_props} onChange={this.props.onChange} />
-                <SelectNetwork onChange={this.props.onChange} />
-                {/*<SelectPaymentCycles onChange={this.props.onChange} />*/}
-                <TextInputField fieldLabel="Payment Address" fieldName="payment_address" onChange={this.props.onChange} />
-                <TextInputField fieldLabel="Payment Amount" fieldName="payment_amount" onChange={this.props.onChange} />
-                <input type="button" value="Create Proposal" onClick={this.props.onSubmit} />
-              </form>
-            </p>
+            <h3 className="App-validationErrorDiv">Creating a treasury proposal requires a non-refundable payment of 100 NRG.</h3>
+            <form>
+              <TextInputField fieldLabel="Proposal Name" fieldName="name" onChange={this.props.onChange} />
+              <TextInputField fieldLabel="Proposal Description URL" fieldName="url" onChange={this.props.onChange} />
+              <SelectFirstPayment {...firstPayment_props} onChange={this.props.onChange} />
+              <SelectNetwork onChange={this.props.onChange} />
+              {/*<SelectPaymentCycles onChange={this.props.onChange} />*/}
+              <TextInputField fieldLabel="Payment Address" fieldName="payment_address" onChange={this.props.onChange} />
+              <TextInputField fieldLabel="Payment Amount" fieldName="payment_amount" onChange={this.props.onChange} />
+              <input type="button" value="Create Proposal" onClick={this.props.onSubmit} />
+            </form>
           </div>
           <div>
             <DisplayTotal {...this.props} />
